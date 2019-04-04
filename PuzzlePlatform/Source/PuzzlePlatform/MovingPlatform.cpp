@@ -44,5 +44,6 @@ void AMovingPlatform::AddActiveTrigger() {
 }
 
 void AMovingPlatform::RemoveActiveTrigger() {
-	--ActivateTriggers;
+	if(ActivateTriggers >= 1)
+		--ActivateTriggers;
 }

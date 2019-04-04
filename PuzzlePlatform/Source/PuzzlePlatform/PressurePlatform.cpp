@@ -13,9 +13,7 @@ APressurePlatform::APressurePlatform()
 	TriggerVolume = CreateDefaultSubobject<UBoxComponent>(TEXT("Pressure Platform"));
 	RootComponent = TriggerVolume;
 
-	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APressurePlatform::OnOverlapBegin);
-	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APressurePlatform::OnOverlapEnd);
-
+	
 
 }
 
@@ -23,7 +21,9 @@ APressurePlatform::APressurePlatform()
 void APressurePlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &APressurePlatform::OnOverlapBegin);
+	TriggerVolume->OnComponentEndOverlap.AddDynamic(this, &APressurePlatform::OnOverlapEnd);
+
 }
 
 // Called every frame
@@ -37,10 +37,10 @@ void APressurePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
 {
 	// Other Actor is the actor that triggered the event. Check that is not ourself.  
 	UE_LOG(LogTemp, Warning, TEXT("On pressure plat."));
-
-	
-	for (auto MovingPlatform : MovingPlatforms) {
-		MovingPlatform->AddActiveTrigger();
+	if (OtherActor && (OtherActor != this) && OtherComp) {
+		for (auto MovingPlatform : MovingPlatforms) {
+			MovingPlatform->AddActiveTrigger();
+		}
 	}
 }
 
@@ -48,10 +48,10 @@ void APressurePlatform::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AAct
 void APressurePlatform::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	// Other Actor is the actor that triggered the event. Check that is not ourself.  
-	UE_LOG(LogTemp, Warning, TEXT("Off pressure plat."));
-	
-	for (auto MovingPlatform : MovingPlatforms) {
-		MovingPlatform->RemoveActiveTrigger();
+	UE_LOG(LogTemp, Warning, TEXT("Off pressure plat ."));
+	if (OtherActor && (OtherActor != this) && OtherComp) {
+		for (auto MovingPlatform : MovingPlatforms) {
+			MovingPlatform->RemoveActiveTrigger();
+		}
 	}
-	
 }
